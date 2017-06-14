@@ -21,4 +21,4 @@ before_install:
 script: 
   - "./Run.command -run -project_location Projects/DemoProject -scenario BasicFeatures -testcase DemoTestCase -browser PhantomJS"
   - "export fail=$(./Run.command -project_location Projects/DemoProject -scenario BasicFeatures -testcase DemoTestCase -browser PhantomJS -latest_exe nofailTests)"
-  - "if [ $fail -ne 0 ] then exit 1; fi"
+  - "if [ $fail -ne 0 ] then exit 1 fi"
