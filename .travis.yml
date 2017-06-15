@@ -1,0 +1,37 @@
+language: java
+
+os:
+  - linux
+
+jdk:
+  - oraclejdk8
+  
+sudo: false
+addons:
+  apt:
+    packages:
+      #- oracle-java8-installer
+      #- google-chrome-stable
+env:
+  global:
+    - workingDir=$(pwd)
+    - projectBing="$(pwd)/Projects/Bing"
+  matrix:
+    - TEST="-scenario basic_search -testcase cortanna -browser PhantomJS -project_location $projectBing"
+    - TEST="-release early -testset smoke -project_location $projectBing"
+
+before_install:
+  - curl -sL https://raw.githubusercontent.com/x0156/cits-travis-seed/master/install.sh | bash
+  # install the sourcefile to update PATH and CIST_ROOT (./lib/cits/)
+  - . ./sourcefile
+  
+before_script:
+  - "echo 'echo $*;exit 1;' > fail;chmod u+x fail;"
+ 
+script: 
+  - "CITS -run $TEST  -dont_launch_report -standalone_report"
+  - "export reportDir=$(CITS  $TEST -latest_exe_loc);CITS  $TEST -latest_exe_data_raw > report.json;"
+  - "failed=$(CITS  $TEST -latest_exe nofailTests);if [ $failed -ne 0 ]; then (./fail $failed Test/s failed); fi"
+  
+after_script:
+  - echo "Reports (in $reportDir):";ls $reportDir
